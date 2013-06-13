@@ -209,7 +209,7 @@ public class PDJpeg extends PDXObjectImage
      * Returns an image of the JPeg, or null if JPegs are not supported. (They should be. )
      * {@inheritDoc}
      */
-    public BufferedImage getRGBImage() throws IOException
+    public final BufferedImage getRGBImage() throws IOException
     {   
         if (image != null)
         {
