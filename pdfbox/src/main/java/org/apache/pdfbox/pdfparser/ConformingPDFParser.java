@@ -128,7 +128,9 @@ public class ConformingPDFParser extends BaseParser {
         int entries = readInt();
         xrefEntries = new ArrayList<XrefEntry>(entries);
         for(int i=0; i<entries; i++)
+        {
             xrefEntries.add(new XrefEntry(objectNumber++, readInt(), readInt(), readLine()));
+        }
         
         return true;
     }
@@ -440,8 +442,7 @@ public class ConformingPDFParser extends BaseParser {
             return dictionary;
         } else if(string.startsWith("/")) {
             // it's a dictionary label. i.e. /Type or /Pages or something similar
-            COSBase name = COSName.getPDFName(string);
-            return name;
+            return COSName.getPDFName(string);
         } else if(string.startsWith("-")) {
             // it's a negitive number
             return parseNumber(string);
@@ -589,7 +590,9 @@ public class ConformingPDFParser extends BaseParser {
         // add them in the proper order, not the reverse order
         Set<COSName> backwardsKeys = backwardsDictionary.keySet();
         for(int i = backwardsKeys.size()-1; i >=0; i--)
+        {
             dict.setItem((COSName)backwardsKeys.toArray()[i], backwardsDictionary.getItem((COSName)backwardsKeys.toArray()[i]));
+        }
         
         // consume the last two '<' chars
         readByteBackwards();
