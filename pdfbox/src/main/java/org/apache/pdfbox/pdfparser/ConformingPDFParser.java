@@ -119,9 +119,9 @@ public class ConformingPDFParser extends BaseParser {
     
     private boolean parseXrefTable() throws IOException {
         String currentLine = readLine();
-        if(throwNonConformingException) {
-            if(!"xref".equals(currentLine))
-                throw new AssertionError("xref table not found.\nExpected: xref\nFound: "+currentLine);
+        if(throwNonConformingException && !"xref".equals(currentLine))
+        {
+            throw new AssertionError("xref table not found.\nExpected: xref\nFound: "+currentLine);
         }
 
         int objectNumber = readInt();
@@ -137,24 +137,24 @@ public class ConformingPDFParser extends BaseParser {
         long xrefLocation = -1;
         consumeWhitespaceBackwards();
         String currentLine = readLineBackwards();
-        if(throwNonConformingException) {
-            if(!"%%EOF".equals(currentLine))
-                throw new AssertionError("Invalid EOF marker.\nExpected: %%EOF\nFound: "+currentLine);
+        if(throwNonConformingException && "%%EOF".equals(currentLine)) {
+        {
+            throw new AssertionError("Invalid EOF marker.\nExpected: %%EOF\nFound: "+currentLine);
         }
 
         xrefLocation = readLongBackwards();
         currentLine = readLineBackwards();
-        if(throwNonConformingException) {
-            if(!"startxref".equals(currentLine))
-                throw new AssertionError("Invalid trailer.\nExpected: startxref\nFound: "+currentLine);
+        if(throwNonConformingException && "startxref".equals(currentLine)) 
+        {
+            throw new AssertionError("Invalid trailer.\nExpected: startxref\nFound: "+currentLine);
         }
 
         document.setTrailer(readDictionaryBackwards());
         consumeWhitespaceBackwards();
         currentLine = readLineBackwards();
-        if(throwNonConformingException) {
-            if(!"trailer".equals(currentLine))
-                throw new AssertionError("Invalid trailer.\nExpected: trailer\nFound: "+currentLine);
+        if(throwNonConformingException && "trailer".equals(currentLine))
+        {
+            throw new AssertionError("Invalid trailer.\nExpected: trailer\nFound: "+currentLine);
         }
 
         return xrefLocation;
@@ -377,23 +377,27 @@ public class ConformingPDFParser extends BaseParser {
         }
 
         int actualObjectNumber = readInt();
-        if(objectNumber != actualObjectNumber)
-            if(throwNonConformingException)
-                throw new AssertionError("Object numer expected was " +
-                        objectNumber + " but actual was " + actualObjectNumber);
+        if (throwNonConformingException && (objectNumber != actualObjectNumber))
+        {
+            throw new AssertionError("Object number expected was " +
+                                    objectNumber + " but actual was " + actualObjectNumber);
+        }
+        
         consumeWhitespace();
 
         int actualGeneration = readInt();
-        if(generation != actualGeneration)
-            if(throwNonConformingException)
-                throw new AssertionError("Generation expected was " +
-                        generation + " but actual was " + actualGeneration);
+        if (throwNonConformingException && (generation != actualGeneration))
+        {
+            throw new AssertionError("Generation expected was " +
+                               generation + " but actual was " + actualGeneration);
+        }
         consumeWhitespace();
 
         String obj = readWord();
-        if(!"obj".equals(obj))
-            if(throwNonConformingException)
+        if (throwNonConformingException && !"obj".equals(obj))
+        {
                 throw new AssertionError("Expected keyword 'obj' but found " + obj);
+        }
         
         // put placeholder object in doc to prevent infinite recursion
         // e.g. read Root -> dereference object -> read object which has /Parent -> GOTO read Root
@@ -467,9 +471,10 @@ public class ConformingPDFParser extends BaseParser {
             int gen = readInt();
             String r = readWord();
 
-            if(!"R".equals(r))
-                if(throwNonConformingException)
-                    throw new AssertionError("Expected keyword 'R' but found " + r);
+            if (throwNonConformingException && !"R".equals(r))
+            {
+                throw new AssertionError("Expected keyword 'R' but found " + r);
+            }
 
             if(recursivlyRead) {
                 // seek to the object, read it, seek back to current location
@@ -548,14 +553,14 @@ public class ConformingPDFParser extends BaseParser {
         // consume the last two '>' chars which signify the end of the dictionary
         consumeWhitespaceBackwards();
         byte singleByte = readByteBackwards();
-        if(throwNonConformingException) {
-            if(singleByte != '>')
-                throw new AssertionError("");
+        if (throwNonConformingException && (singleByte != '>'))
+        {
+            throw new AssertionError("");
         }
         singleByte = readByteBackwards();
-        if(throwNonConformingException) {
-            if(singleByte != '>')
-                throw new AssertionError("");
+        if (throwNonConformingException && (singleByte != '>'))
+        {
+            throw new AssertionError("");
         }
         
         // check to see if we're at the end of the dictionary
