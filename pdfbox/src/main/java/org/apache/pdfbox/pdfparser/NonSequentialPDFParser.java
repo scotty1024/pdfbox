@@ -432,14 +432,11 @@ public class NonSequentialPDFParser extends PDFParser
         if (!parseMinimalCatalog)
         {
             COSObject catalogObj = document.getCatalog();
-            if (catalogObj != null)
+            if ((catalogObj != null) && (catalogObj.getObject() instanceof COSDictionary))
             {
-                if (catalogObj.getObject() instanceof COSDictionary)
-                {
-                    parseDictObjects((COSDictionary) catalogObj.getObject(), (COSName[]) null);
-                    allPagesParsed = true;
-                    document.setDecrypted();
-                }
+                parseDictObjects((COSDictionary) catalogObj.getObject(), (COSName[]) null);
+                allPagesParsed = true;
+                document.setDecrypted();
             }
         }
         initialParseDone = true;
@@ -898,14 +895,12 @@ public class NonSequentialPDFParser extends PDFParser
 
             COSDictionary dic = (COSDictionary) base;
             int count = dic.getInt(COSName.COUNT);
-            if (count >= 0)
+
+            if ((count >= 0) && ((curPageCount + count) <= num))
             {
                 // skip this branch if requested page comes later
-                if ((curPageCount + count) <= num)
-                {
-                    curPageCount += count;
-                    continue;
-                }
+                curPageCount += count;
+                continue;
             }
 
             COSArray kids = (COSArray) dic.getDictionaryObject(COSName.KIDS);
